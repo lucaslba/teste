@@ -15873,7 +15873,8 @@
         "properties": {
           "mergeSuggestions": {
             "items": {
-              "type": "array"
+              "type": "array",
+              "items": {"type": "object"}
             },
             "type": "array"
           },
