@@ -1,36 +1,14 @@
 {
     "openapi": "3.0.0",
     "paths": {
-      "/api/v1/crm/operations": {
+      "/api/v1/land/properties/document": {
         "get": {
-          "operationId": "CustomerOperationsController_findCustomerOperations",
+          "operationId": "PropertyController_getPresignedPostDataUrl",
           "summary": "",
-          "description": "List all customer and its contact's operations sorted by `emissionDate` date.",
+          "description": "Retrieves presigned post data URL.",
           "parameters": [
             {
-              "name": "sortOrder",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "default": "ASC",
-                "enum": [
-                  "ASC",
-                  "DESC"
-                ],
-                "type": "string"
-              }
-            },
-            {
-              "name": "limit",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "minimum": 0,
-                "type": "number"
-              }
-            },
-            {
-              "name": "organizationId",
+              "name": "propertyId",
               "required": true,
               "in": "query",
               "schema": {
@@ -38,7 +16,7 @@
               }
             },
             {
-              "name": "customerId",
+              "name": "fileName",
               "required": true,
               "in": "query",
               "schema": {
@@ -48,33 +26,72 @@
           ],
           "responses": {
             "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/CustomerOperationDTO"
-                    }
-                  }
-                }
-              }
+              "description": "Success"
             },
             "400": {
-              "description": ""
+              "description": "Bad Request"
             },
             "401": {
-              "description": ""
+              "description": "Unauthorized"
             },
             "403": {
-              "description": ""
+              "description": "Forbidden"
             },
             "404": {
-              "description": ""
+              "description": "Not Found"
+            },
+            "500": {
+              "description": "Presigned post data encountered an error"
             }
           },
           "tags": [
-            "CRM"
+            "land/properties"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/properties/related-document": {
+        "patch": {
+          "operationId": "PropertyController_patchRelatedDocument",
+          "summary": "",
+          "parameters": [
+            {
+              "name": "propertyId",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "fileKey",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Bad Request"
+            }
+          },
+          "tags": [
+            "land/properties"
           ],
           "security": [
             {
@@ -82,167 +99,20 @@
             }
           ]
         },
-        "post": {
-          "operationId": "CustomerOperationsController_createCustomerOperation",
+        "delete": {
+          "operationId": "PropertyController_deleteRelatedDocument",
           "summary": "",
-          "description": "Create a new customer operation.",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateCustomerOperationDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CustomerOperationShortDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": "Customer not found."
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ErrorOnCreatingCustomerOperationDTO"
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/files/signed-urls": {
-        "get": {
-          "operationId": "CrmFilesController_createReadPresignedUrlForCrmFileWithPath",
-          "summary": "",
-          "description": "Get a temporary read access URL for a file that was uploaded for `file` custom fields.",
           "parameters": [
             {
-              "name": "documentUrlPath",
+              "name": "propertyId",
               "required": true,
               "in": "query",
               "schema": {
                 "type": "string"
               }
-            }
-          ],
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CrmFilePresignedUrlGetMetadataDTO"
-                  }
-                }
-              }
             },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
             {
-              "bearer": []
-            }
-          ]
-        },
-        "post": {
-          "operationId": "CrmFilesController_createPresignedUrlForCrmFile",
-          "summary": "",
-          "description": "Get a temporary write access URL for a file. This is used to upload a file for `file` custom fields.",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GenerateCrmFilePresignedUrlDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CrmFilePresignedUrlPostMetadataDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/native-fields": {
-        "get": {
-          "operationId": "CrmController_fetchAvailableNativeFieldsSpec",
-          "summary": "",
-          "description": "List all native fields of CRM entities available to manage.",
-          "parameters": [
-            {
-              "name": "entity",
+              "name": "fileKey",
               "required": true,
               "in": "query",
               "schema": {
@@ -252,27 +122,23 @@
           ],
           "responses": {
             "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/NativeFieldSchemaDTO"
-                    }
-                  }
-                }
-              }
+              "description": "Success"
             },
             "401": {
-              "description": ""
+              "description": "Unauthorized"
             },
             "403": {
-              "description": ""
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Bad Request"
+            },
+            "409": {
+              "description": "This property has no documents related"
             }
           },
           "tags": [
-            "CRM"
+            "land/properties"
           ],
           "security": [
             {
@@ -281,14 +147,85 @@
           ]
         }
       },
-      "/api/v1/crm/custom-fields": {
-        "get": {
-          "operationId": "CustomFieldController_fetchCustomFields",
+      "/api/v1/land/properties/parcels/search": {
+        "post": {
+          "operationId": "PropertyController_searchParcels",
           "summary": "",
-          "description": "List all custom fields available for the given organization.",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelsSearchOptionsDTO"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "tags": [
+            "land/properties"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/properties/parcels/search-on-elastic": {
+        "post": {
+          "operationId": "PropertyController_searchParcelsOnElastic",
+          "summary": "",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelsSearchOnElasticOptionsDTO"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "tags": [
+            "land/properties"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/properties/esg-snapshot/{propertyId}/listing": {
+        "get": {
+          "operationId": "PropertyController_getListingByCategory",
+          "summary": "",
           "parameters": [
             {
-              "name": "organizationId",
+              "name": "category",
               "required": true,
               "in": "query",
               "schema": {
@@ -296,167 +233,10 @@
               }
             },
             {
-              "name": "entity",
+              "name": "source",
               "required": false,
               "in": "query",
-              "description": "A comma-separated value list of entities to filter by.",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/CustomFieldShortDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "post": {
-          "operationId": "CustomFieldController_createOneCustomField",
-          "summary": "",
-          "description": "Create a new custom field for the given organization.",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateCustomFieldDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CustomFieldShortDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "422": {
-              "description": "If the custom field is already defined for the given organization."
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/custom-fields-groups": {
-        "get": {
-          "operationId": "CustomFieldGroupController_fetchCustomFieldsGroups",
-          "summary": "",
-          "description": "List all custom fields groups for a given organization.",
-          "parameters": [
-            {
-              "name": "organizationId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "formId",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/CustomFieldGroupDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/forms": {
-        "get": {
-          "operationId": "FormsController_getOrganizationForms",
-          "summary": "",
-          "description": "List all forms for a given organization.",
-          "parameters": [
-            {
-              "name": "organizationId",
-              "required": true,
-              "in": "query",
+              "description": "Snapshot source.",
               "schema": {
                 "type": "string"
               }
@@ -465,832 +245,33 @@
               "name": "type",
               "required": false,
               "in": "query",
+              "description": "Snapshot type.",
               "schema": {
-                "enum": [
-                  "CREATE",
-                  "READ",
-                  "UPDATE",
-                  "DELETE"
-                ],
                 "type": "string"
               }
             },
             {
-              "name": "entity",
+              "name": "minArea",
               "required": false,
               "in": "query",
+              "description": "Min snapshot area.",
               "schema": {
-                "enum": [
-                  "ticket",
-                  "customer",
-                  "task"
-                ],
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/OrganizationFormShortDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/forms/{formId}": {
-        "get": {
-          "operationId": "FormsController_getOrganizationFormDefinition",
-          "summary": "",
-          "description": "Get a form details by its ID.",
-          "parameters": [
-            {
-              "name": "formId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/OrganizationFormDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/forms/submissions": {
-        "post": {
-          "operationId": "FormsController_submitForm",
-          "summary": "",
-          "description": "Submit a form.",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/CreateOrganizationFormSubmissionDTO"
-                    },
-                    {
-                      "$ref": "#/components/schemas/UpdateOrganizationFormSubmissionDTO"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "Submission data created successfully",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/OrganizationFormSubmissionDTO"
-                  }
-                }
-              }
-            },
-            "204": {
-              "description": "Submission data updated successfully"
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/forms/{formId}/submissions": {
-        "get": {
-          "operationId": "FormsController_getFormSubmission",
-          "summary": "",
-          "description": "Get a form submission by its ID.",
-          "parameters": [
-            {
-              "name": "formId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "entityRecordId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/OrganizationFormSubmissionDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/workflows": {
-        "get": {
-          "operationId": "WorkflowController_getOrganizationWorkflows",
-          "summary": "",
-          "description": "**This is under feature-flag mode!**\n\nList all workflows for a given organization.",
-          "parameters": [
-            {
-              "name": "organizationId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/WorkflowDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/workflows/{workflowId}": {
-        "get": {
-          "operationId": "WorkflowController_getOrganizationDetails",
-          "summary": "",
-          "description": "Get workflow details.",
-          "parameters": [
-            {
-              "name": "workflowId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/WorkflowDetailsDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/workflow-groups": {
-        "get": {
-          "operationId": "WorkflowGroupController_getOrganizationWorkflowGroups",
-          "summary": "",
-          "description": "List all workflow groups for an organization.",
-          "parameters": [
-            {
-              "name": "organizationId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/WorkflowGroupDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/transitions": {
-        "get": {
-          "operationId": "TransitionRuleControler_listWorkflowTransitions",
-          "summary": "",
-          "description": "List all transition rules for a given workflow.",
-          "parameters": [
-            {
-              "name": "workflowId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/TransitionRuleDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "post": {
-          "operationId": "TransitionRuleControler_createTransitionRule",
-          "summary": "",
-          "description": "Create a transition rule for a given workflow.",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateWorkflowTransitionDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/TransitionRuleDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/phases": {
-        "post": {
-          "operationId": "PhaseController_createOnePhase",
-          "summary": "",
-          "description": "Create a new phase for some workflow",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreatePhaseDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/PhaseShortDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "get": {
-          "operationId": "PhaseController_getPhases",
-          "summary": "",
-          "description": "Get all phases for some workflow.",
-          "parameters": [
-            {
-              "name": "workflowId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/PhaseDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/tickets": {
-        "get": {
-          "operationId": "TicketsController_getWorklowTickets",
-          "summary": "",
-          "description": "Get all tickets filtered.",
-          "parameters": [
-            {
-              "name": "organizationId",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "assignedUserId",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "authorId",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "relatedCustomerId",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "resolvePhase",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "default": false,
-                "type": "boolean"
-              }
-            },
-            {
-              "name": "resolveWorkflow",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "default": false,
-                "type": "boolean"
-              }
-            },
-            {
-              "name": "workflowId",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "required": false,
-              "name": "financialValue[min]",
-              "in": "query",
-              "schema": {
+                "default": 0,
                 "type": "number"
               }
             },
             {
+              "name": "maxArea",
               "required": false,
-              "name": "financialValue[max]",
               "in": "query",
+              "description": "Max snapshot area.",
               "schema": {
+                "default": 9007199254740991,
                 "type": "number"
               }
             },
             {
-              "required": false,
-              "name": "dueDatetime[min]",
-              "in": "query",
-              "schema": {
-                "format": "date-time",
-                "type": "string"
-              }
-            },
-            {
-              "required": false,
-              "name": "dueDatetime[max]",
-              "in": "query",
-              "schema": {
-                "format": "date-time",
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/TicketDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "post": {
-          "operationId": "TicketsController_createTicket",
-          "summary": "",
-          "description": "Create a ticket on a workflow.",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateTicketDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/TicketDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CreateTicketErrorDTO"
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/tickets/optimized": {
-        "get": {
-          "operationId": "TicketsController_getOptimizedTickets",
-          "summary": "",
-          "parameters": [
-            {
-              "name": "organizationId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "workflowId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/OptimizedTicketDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/tickets/{ticketId}": {
-        "get": {
-          "operationId": "TicketsController_getOneTicket",
-          "summary": "",
-          "description": "Get ticket details by id.",
-          "parameters": [
-            {
-              "name": "ticketId",
+              "name": "propertyId",
               "required": true,
               "in": "path",
               "schema": {
@@ -1300,1692 +281,14 @@
           ],
           "responses": {
             "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/TicketDetailsDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "delete": {
-          "operationId": "TicketsController_removeOneTicket",
-          "summary": "",
-          "description": "Delete a ticket by id.",
-          "parameters": [
-            {
-              "name": "ticketId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "204": {
-              "description": "Ticket successfully deleted"
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "put": {
-          "operationId": "TicketsController_updateOneTicket",
-          "summary": "",
-          "description": "Update a ticket.",
-          "parameters": [
-            {
-              "name": "ticketId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateTicketDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/TicketDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/tickets/{ticketId}/phases-submissions": {
-        "get": {
-          "operationId": "TicketsController_getFormSubmission",
-          "summary": "",
-          "description": "Get all form submissions each phase of a ticket with last user to update said form.",
-          "parameters": [
-            {
-              "name": "ticketId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/PhaseTicketFormSubmissionDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/credit-limit-tickets": {
-        "get": {
-          "operationId": "CreditLimitTicketsController_getWorklowCreditLimitTickets",
-          "summary": "",
-          "description": "Get all credit request tickets filtered.",
-          "parameters": [
-            {
-              "name": "organizationId",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "assignedUserId",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "authorId",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "relatedCustomerId",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "resolvePhase",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "default": false,
-                "type": "boolean"
-              }
-            },
-            {
-              "name": "resolveWorkflow",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "default": false,
-                "type": "boolean"
-              }
-            },
-            {
-              "name": "workflowId",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "required": false,
-              "name": "financialValue[min]",
-              "in": "query",
-              "schema": {
-                "type": "number"
-              }
-            },
-            {
-              "required": false,
-              "name": "financialValue[max]",
-              "in": "query",
-              "schema": {
-                "type": "number"
-              }
-            },
-            {
-              "required": false,
-              "name": "dueDatetime[min]",
-              "in": "query",
-              "schema": {
-                "format": "date-time",
-                "type": "string"
-              }
-            },
-            {
-              "required": false,
-              "name": "dueDatetime[max]",
-              "in": "query",
-              "schema": {
-                "format": "date-time",
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/CreditRequestTicketDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/tickets/{ticketId}/transitions": {
-        "get": {
-          "operationId": "TicketTransitionController_getTicketTransitionHistory",
-          "summary": "",
-          "description": "Get ticket transition history.",
-          "parameters": [
-            {
-              "name": "ticketId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "resolvePhase",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "boolean"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/TicketTransitionDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "post": {
-          "operationId": "TicketTransitionController_createTicketTransition",
-          "summary": "",
-          "description": "Create new ticket transition.",
-          "parameters": [
-            {
-              "name": "ticketId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateTicketTransitionDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/TicketTransitionShortDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "oneOf": [
-                      {
-                        "$ref": "#/components/schemas/ErrorOnCreatingTicketTransitionDueToWrongCurrentStateDTO"
-                      },
-                      {
-                        "$ref": "#/components/schemas/ErrorOnCreatingTicketTransitionDueToFormConstrantsFailureDTO"
-                      },
-                      {
-                        "$ref": "#/components/schemas/ErrorOnCreatingTicketTransitionDueToUnmetTransitionCriteriaDTO"
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/comments": {
-        "get": {
-          "operationId": "CommentsController_getTicketComments",
-          "summary": "",
-          "description": "List all comments for a ticket",
-          "parameters": [
-            {
-              "name": "ticketId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/CommentDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "post": {
-          "operationId": "CommentsController_createOneComment",
-          "summary": "",
-          "description": "Create a new comment for a ticket",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateCommentDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CommentShortDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/comments/{commentId}": {
-        "delete": {
-          "operationId": "CommentsController_removeOneCommentById",
-          "summary": "",
-          "description": "Delete a comment for a ticket",
-          "parameters": [
-            {
-              "name": "commentId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "204": {
-              "description": ""
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/tickets/{ticketId}/submissions": {
-        "post": {
-          "operationId": "TicketSubmissionsController_proxyToSubmitForm",
-          "summary": "",
-          "description": "Submit form data for a ticket",
-          "parameters": [
-            {
-              "name": "ticketId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateTicketOrgaizationFormProxyDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "204": {
-              "description": "Ticket's form data updated successfully"
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/credit-limit-collateral-assets": {
-        "post": {
-          "operationId": "CollateralAssetsController_createCustomerCollateralAsset",
-          "summary": "",
-          "description": "Create a new collateral asset to one customer.",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateCustomerCollateralAssetDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CollateralAssetsDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/credit-limit-collateral-assets/{collateralAssetId}": {
-        "get": {
-          "operationId": "CollateralAssetsController_fetchOneCustomerCollateralAssetsById",
-          "summary": "",
-          "description": "Retrieve detailed information about a customer collateral asset.",
-          "parameters": [
-            {
-              "name": "collateralAssetId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CollateralAssetDetailsDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "put": {
-          "operationId": "CollateralAssetsController_updateOneCustomerCollateralAssetsById",
-          "summary": "",
-          "description": "Update some informations of a customer collateral asset.",
-          "parameters": [
-            {
-              "name": "collateralAssetId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateCollateralAssetDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CollateralAssetsDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/tickets/{ticketId}/credit-limit-collateral-assets": {
-        "get": {
-          "operationId": "CollateralAssetsController_fetchCustomerCollateralAssetsByTicket",
-          "summary": "",
-          "description": "List all collateral assets of given credit request sorted by descending order of creation.",
-          "parameters": [
-            {
-              "name": "ticketId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/CollateralAssetsDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/customers/{customerId}/credit-limit-collateral-assets": {
-        "get": {
-          "operationId": "CollateralAssetsController_fetchCustomerCollateralAssets",
-          "summary": "",
-          "description": "List all collateral assets for a given customer sorted by descending order of creation.",
-          "parameters": [
-            {
-              "name": "customerId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/CollateralAssetsDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/credit-request-approvals": {
-        "get": {
-          "operationId": "CreditLimitApprovalsController_fetchAuthorOrTicketCreditLimitApprovals",
-          "summary": "",
-          "description": "List all credit limit approvals for a given ticket sorted by descending order of creation.",
-          "parameters": [
-            {
-              "name": "ticketId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/CreditLimitApprovalDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "post": {
-          "operationId": "CreditLimitApprovalsController_createCreditLimitApproval",
-          "summary": "",
-          "description": "Create a new ticket credit limit approval.",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateCreditLimitApprovalDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CreditLimitApprovalShortDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CreditLimitApprovalCreationErrorDTO"
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/credit-request-approvals/{creditLimitApprovalId}": {
-        "delete": {
-          "operationId": "CreditLimitApprovalsController_removeCreditLimitApproval",
-          "summary": "",
-          "parameters": [
-            {
-              "name": "creditLimitApprovalId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "204": {
-              "description": ""
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/credit-limit-reviews": {
-        "get": {
-          "operationId": "CreditLimitReviewsController_fetchCustomerOrContactCreditLimitReview",
-          "summary": "",
-          "description": "List the most recent credit limit reviews for a given customer or contact.",
-          "parameters": [
-            {
-              "name": "limit",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "minimum": 0,
-                "maximum": 20,
-                "default": 10,
-                "type": "number"
-              }
-            },
-            {
-              "name": "page",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "minimum": 1,
-                "default": 1,
-                "type": "number"
-              }
-            },
-            {
-              "name": "organizationId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "customerId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CreditLimitReviewsHistoryDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "post": {
-          "operationId": "CreditLimitReviewsController_createOneCreditLimitReviewByUser",
-          "summary": "",
-          "description": "Create a new user-made credit limit review for customer or customer's contact.",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/CreateManualCreditLimitReviewDTO"
-                    },
-                    {
-                      "$ref": "#/components/schemas/CreateCollateralAssetCreditLimitReviewDTO"
-                    },
-                    {
-                      "$ref": "#/components/schemas/CreateTicketCreditLimitReviewDTO"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CreditLimitReviewShortDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CreditLimitReviewCreationErrorDTO"
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/pre-approved-credit-limits/summary": {
-        "get": {
-          "operationId": "PreApprovedCreditLimitController_getCustomerPreApproved",
-          "summary": "",
-          "description": "Retrieve the pre-approved credit limit for given customer.",
-          "parameters": [
-            {
-              "name": "customerId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "organizationId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/PreApprovedCreditLimitSummaryDTO"
-                  }
-                }
-              }
-            },
-            "204": {
-              "description": "There is not enough data to compose the summary"
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/pre-approved-credit-limits/contacts/summary": {
-        "get": {
-          "operationId": "PreApprovedCreditLimitController_getCustomerContactsPreApprovedLimitSummary",
-          "summary": "",
-          "description": "Retrieve all pre-approved credit limits of each customer's contact.",
-          "parameters": [
-            {
-              "name": "customerId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "organizationId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/ContactPreApprovedCreditLimitSummaryDTO"
-                    }
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/credit-limit-ticket-report": {
-        "get": {
-          "operationId": "CreditLimitTicketReportController_getCreditLimitReport",
-          "summary": "",
-          "description": "Get all summary data of a ticket credit limit request result.",
-          "parameters": [
-            {
-              "name": "organizationId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "ticketId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "timezone",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CreditLimitTicketFullReportDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/credit-limit-requests": {
-        "get": {
-          "operationId": "CreditLimitRequestsController_listCreditLimitRequestsOfTicketPaged",
-          "summary": "",
-          "description": "List all credit limit requests of a given ticket.",
-          "parameters": [
-            {
-              "name": "limit",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "minimum": 0,
-                "maximum": 10,
-                "default": 5,
-                "type": "number"
-              }
-            },
-            {
-              "name": "page",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "minimum": 1,
-                "default": 1,
-                "type": "number"
-              }
-            },
-            {
-              "name": "ticketId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "status",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CreditLimitRequestHistoryDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "post": {
-          "operationId": "CreditLimitRequestsController_makeNewCreditLimitRequest",
-          "summary": "",
-          "description": "**This is under feature-flag mode!**\n\nMake a new credit limit request.",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MakeNewCreditLimitRequestDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "202": {
-              "description": "The credit limit request was submitted for processing asynchronously.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CreditLimitRequestPendingExecutionShortDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/credit-limit-requests/deprecated-sync-version": {
-        "post": {
-          "operationId": "CreditLimitRequestsController_makeNewCreditLimitRequestSync",
-          "summary": "",
-          "deprecated": true,
-          "description": "**This is under feature-flag mode!**\n\nMake a new credit limit request and wait for its execution to finish.",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MakeNewCreditLimitRequestDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/NewCreditLimitRequestResultDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": "The given ticket was not found"
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ErrorOnCreatingNewCreditLimitRequestDTO"
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/credit-limit-requests/{creditLimitRequestId}": {
-        "get": {
-          "operationId": "CreditLimitRequestsController_getCreditLimitRequestDetails",
-          "summary": "",
-          "description": "Get the details of a credit limit request.",
-          "parameters": [
-            {
-              "name": "creditLimitRequestId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/CreditLimitRequestsDetailsDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/credit-limit-definitions/current": {
-        "get": {
-          "operationId": "CreditLimitDefinitionsController_getCreditLimitDefinitionsActiveOnOrganization",
-          "summary": "",
-          "description": "Get the current credit limit definition active for an organization",
-          "parameters": [
-            {
-              "name": "organizationId",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/OrganizationCreditLimitDefinitionShortDTO"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ErrorOnCurrentCreditLimitDefinitionDTO"
-                  }
-                }
-              }
-            }
-          },
-          "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        }
-      },
-      "/api/v1/crm/tasks": {
-        "post": {
-          "operationId": "TaskController_createTask",
-          "summary": "",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateTaskDTO"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
               "description": "Success",
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/TaskDTO"
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ListingPropertiesEsgSnapshotDTO"
+                    }
                   }
                 }
               }
@@ -2994,161 +297,180 @@
               "description": "Bad Request"
             },
             "401": {
-              "description": ""
+              "description": "Unauthorized"
             },
             "403": {
-              "description": ""
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
           "tags": [
-            "CRM"
+            "land/properties"
           ],
           "security": [
             {
               "bearer": []
             }
           ]
-        },
+        }
+      },
+      "/api/v1/land/properties/esg-snapshot/{propertyId}/summary": {
         "get": {
-          "operationId": "TaskController_getOrganizationTasks",
+          "operationId": "PropertyController_getPropertyEsgSummary",
           "summary": "",
           "parameters": [
             {
-              "name": "phaseId",
-              "required": false,
-              "in": "query",
-              "description": "If a ticketId is informed, a phaseId can also be informed to filter phase tasks",
+              "name": "propertyId",
+              "required": true,
+              "in": "path",
               "schema": {
                 "type": "string"
               }
-            },
-            {
-              "name": "organizationId",
-              "required": false,
-              "in": "query",
-              "description": "Either ticketId or organizationId can be informed to filter tasks",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "ticketId",
-              "required": false,
-              "in": "query",
-              "description": "Either ticketId or organizationId can be informed to filter tasks",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "startDueDate",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "endDueDate",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "assignedUserIds",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SummaryEsgSnapshotDTO"
+                    }
+                  }
                 }
               }
             },
+            "400": {
+              "description": "Bad Request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "land/properties"
+          ],
+          "security": [
             {
-              "name": "status",
-              "required": false,
-              "in": "query",
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/properties/esg-snapshot/{esgSnapshotId}": {
+        "get": {
+          "operationId": "PropertyController_getPropertyEsgSnapshot",
+          "summary": "",
+          "description": "Get snapshot of property ",
+          "parameters": [
+            {
+              "name": "esgSnapshotId",
+              "required": true,
+              "in": "path",
               "schema": {
-                "enum": [
-                  "COMPLETED",
-                  "PENDING"
-                ],
                 "type": "string"
               }
+            }
+          ],
+          "responses": {
+            "400": {
+              "description": "Bad Request"
             },
-            {
-              "name": "taskTemplateIds",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            },
+            "default": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/PropertyEsgSnapshotDetailDTO"
+                    }
+                  }
                 }
               }
-            },
+            }
+          },
+          "tags": [
+            "land/properties"
+          ],
+          "security": [
             {
-              "name": "filterValue",
-              "required": false,
-              "in": "query",
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/properties/{propertyId}/soil": {
+        "get": {
+          "operationId": "PropertyController_getPropertySoil",
+          "summary": "",
+          "description": "Returns the soil of a property.",
+          "parameters": [
+            {
+              "name": "propertyId",
+              "required": true,
+              "in": "path",
               "schema": {
                 "type": "string"
               }
             },
             {
-              "name": "paginate",
-              "required": false,
+              "name": "translate",
+              "required": true,
               "in": "query",
               "schema": {
-                "default": "true",
                 "type": "boolean"
               }
-            },
-            {
-              "name": "limit",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "minimum": 0,
-                "maximum": 10,
-                "default": 5,
-                "type": "number"
-              }
-            },
-            {
-              "name": "page",
-              "required": false,
-              "in": "query",
-              "schema": {
-                "minimum": 1,
-                "default": 1,
-                "type": "number"
-              }
             }
           ],
           "responses": {
-            "200": {
-              "description": "Success",
+            "400": {
+              "description": "Bad Request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            },
+            "default": {
+              "description": "",
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/CompleteTaskPaginationDTO"
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/GetSoilDTO"
+                    }
                   }
                 }
               }
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
             }
           },
           "tags": [
-            "CRM"
+            "land/properties"
           ],
           "security": [
             {
@@ -3157,13 +479,14 @@
           ]
         }
       },
-      "/api/v1/crm/tasks/complete/{taskId}": {
-        "put": {
-          "operationId": "TaskController_completeTask",
+      "/api/v1/land/properties/{propertyId}/season-statistics": {
+        "get": {
+          "operationId": "PropertyController_getPropertySeasonsWaterBalance",
           "summary": "",
+          "description": "Returns the water balance of a property.",
           "parameters": [
             {
-              "name": "taskId",
+              "name": "propertyId",
               "required": true,
               "in": "path",
               "schema": {
@@ -3171,46 +494,43 @@
               }
             },
             {
-              "name": "entityRecordId",
+              "name": "perYear",
               "required": true,
               "in": "query",
               "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "submissionAction",
-              "required": true,
-              "in": "query",
-              "schema": {
-                "enum": [
-                  "UPDATE",
-                  "CREATE"
-                ],
                 "type": "string"
               }
             }
           ],
           "responses": {
-            "200": {
-              "description": "Success",
+            "400": {
+              "description": "Bad Request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            },
+            "default": {
+              "description": "",
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/TaskDTO"
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/PropertySeasonStatisticsDTO"
+                    }
                   }
                 }
               }
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
             }
           },
           "tags": [
-            "CRM"
+            "land/properties"
           ],
           "security": [
             {
@@ -3219,14 +539,14 @@
           ]
         }
       },
-      "/api/v1/crm/tasks/{taskId}": {
-        "put": {
-          "operationId": "TaskController_updateOneTask",
+      "/api/v1/land/property-incra-parcel/{incraParcelId}": {
+        "delete": {
+          "operationId": "PropertyIncraParcelController_deletePropertyIncraParcel",
           "summary": "",
-          "description": "Update a task.",
+          "description": "Delete certain property-car",
           "parameters": [
             {
-              "name": "taskId",
+              "name": "incraParcelId",
               "required": true,
               "in": "path",
               "schema": {
@@ -3234,73 +554,19 @@
               }
             }
           ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateTaskDTO"
-                }
-              }
-            }
-          },
           "responses": {
             "201": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/TaskDTO"
-                  }
-                }
-              }
+              "description": "Success"
             },
             "401": {
-              "description": ""
+              "description": "Unauthorized"
             },
             "403": {
-              "description": ""
+              "description": "Forbidden"
             }
           },
           "tags": [
-            "CRM"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ]
-        },
-        "delete": {
-          "operationId": "TaskController_deleteTaskById",
-          "summary": "",
-          "description": "Soft deletes a task.",
-          "parameters": [
-            {
-              "name": "taskId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "204": {
-              "description": ""
-            },
-            "401": {
-              "description": ""
-            },
-            "403": {
-              "description": ""
-            },
-            "404": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "CRM"
+            "land/property-incra-parcel"
           ],
           "security": [
             {
@@ -3309,13 +575,161 @@
           ]
         }
       },
-      "/api/v1/crm/tasks/assigned-users": {
+      "/api/v1/land/property-car/{propertyCarId}": {
+        "delete": {
+          "operationId": "PropertyCarController_deletePropertyCar",
+          "summary": "",
+          "description": "Delete certain property-car",
+          "parameters": [
+            {
+              "name": "propertyCarId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Success"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "tags": [
+            "land/property-car"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/areas": {
         "get": {
-          "operationId": "TaskController_getTasksAssignedUsers",
+          "operationId": "AreaController_getPropertyAreas",
+          "summary": "",
+          "description": "Returns the areas of a property.",
+          "parameters": [
+            {
+              "name": "propertyId",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "400": {
+              "description": "Bad Request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            },
+            "default": {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/AreaShortDTO"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "tags": [
+            "land/areas"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/areas/ndvi": {
+        "get": {
+          "operationId": "AreaController_getNDVIHistoryOfArea",
+          "summary": "",
+          "description": "Returns the NDVI of an area.",
+          "parameters": [
+            {
+              "name": "areaId",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "minReferenceDate",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/NdviDTO"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "land/areas"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/area-seasons/merged": {
+        "get": {
+          "operationId": "AreaSeasonsController_getPropertySeasonArea",
           "summary": "",
           "parameters": [
             {
-              "name": "organizationId",
+              "name": "propertyId",
               "required": true,
               "in": "query",
               "schema": {
@@ -3331,21 +745,27 @@
                   "schema": {
                     "type": "array",
                     "items": {
-                      "$ref": "#/components/schemas/TaskAssignedUserDTO"
+                      "$ref": "#/components/schemas/AreaSeasonsMergedDTO"
                     }
                   }
                 }
               }
             },
+            "400": {
+              "description": "Bad Request"
+            },
             "401": {
-              "description": ""
+              "description": "Unauthorized"
             },
             "403": {
-              "description": ""
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
           "tags": [
-            "CRM"
+            "land/area-seasons"
           ],
           "security": [
             {
@@ -3354,13 +774,13 @@
           ]
         }
       },
-      "/api/v1/crm/tasks/task-templates": {
+      "/api/v1/land/area-seasons/raw": {
         "get": {
-          "operationId": "TaskTemplateController_getTaskTemplates",
+          "operationId": "AreaSeasonsController_getAreaSeasonsByAreaId",
           "summary": "",
           "parameters": [
             {
-              "name": "organizationId",
+              "name": "areaId",
               "required": true,
               "in": "query",
               "schema": {
@@ -3370,30 +790,33 @@
           ],
           "responses": {
             "200": {
-              "description": "",
+              "description": "Success",
               "content": {
                 "application/json": {
                   "schema": {
                     "type": "array",
                     "items": {
-                      "$ref": "#/components/schemas/TaskTemplateDTO"
+                      "$ref": "#/components/schemas/AreaSeasonRawDTO"
                     }
                   }
                 }
               }
             },
             "400": {
-              "description": ""
+              "description": "Bad Request"
             },
             "401": {
-              "description": ""
+              "description": "Unauthorized"
             },
             "403": {
-              "description": ""
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
           "tags": [
-            "CRM"
+            "land/area-seasons"
           ],
           "security": [
             {
@@ -3402,17 +825,305 @@
           ]
         }
       },
-      "/api/v1/crm/tasks/task-templates/{taskTemplateId}": {
-        "put": {
-          "operationId": "TaskTemplateController_updateTaskTemplate",
+      "/api/v1/land/area-seasons/detected-seasons": {
+        "get": {
+          "operationId": "AreaSeasonsController_getDetectedSeasonsFromGis",
           "summary": "",
           "parameters": [
             {
-              "name": "taskTemplateId",
+              "name": "propertyId",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          },
+          "tags": [
+            "land/area-seasons"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/property-season": {
+        "get": {
+          "operationId": "PropertySeasonController_getAllPropertySeasons",
+          "summary": "",
+          "description": "Retrieve properties seasons by property",
+          "parameters": [
+            {
+              "name": "propertyId",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/PropertySeasonsDTO"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "land/property-season"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        },
+        "post": {
+          "operationId": "PropertySeasonController_create",
+          "summary": "",
+          "description": "Create a property season",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePropertySeasonDTO"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "land/property-season"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/property-season/grouped": {
+        "get": {
+          "operationId": "PropertySeasonController_getGroupedPropertySeasons",
+          "summary": "",
+          "description": "Retrieve properties seasons by property",
+          "parameters": [
+            {
+              "name": "propertyId",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/GroupedPropertySeasonDTO"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "land/property-season"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/property-season/summary": {
+        "get": {
+          "operationId": "PropertySeasonController_getPropertySeasonsSummary",
+          "summary": "",
+          "description": "Retrieve properties seasons by property",
+          "parameters": [
+            {
+              "name": "propertyId",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PropertySeasonSummaryDTO"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "land/property-season"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/property-season/{id}": {
+        "get": {
+          "operationId": "PropertySeasonController_getPropertySeason",
+          "summary": "",
+          "description": "Get property season by id",
+          "parameters": [
+            {
+              "name": "id",
               "required": true,
               "in": "path",
               "schema": {
                 "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/PropertySeasonsDTO"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "land/property-season"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        },
+        "put": {
+          "operationId": "PropertySeasonController_update",
+          "summary": "",
+          "description": "Update a property season",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resetProfit",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "boolean"
               }
             }
           ],
@@ -3421,37 +1132,30 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateTaskTemplateDTO"
+                  "$ref": "#/components/schemas/CreatePropertySeasonDTO"
                 }
               }
             }
           },
           "responses": {
             "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/TaskTemplateDTO"
-                  }
-                }
-              }
+              "description": "Success"
             },
             "400": {
-              "description": ""
+              "description": "Bad Request"
             },
             "401": {
-              "description": ""
+              "description": "Unauthorized"
             },
             "403": {
-              "description": ""
+              "description": "Forbidden"
             },
             "404": {
-              "description": ""
+              "description": "Not Found"
             }
           },
           "tags": [
-            "CRM"
+            "land/property-season"
           ],
           "security": [
             {
@@ -3460,11 +1164,12 @@
           ]
         },
         "delete": {
-          "operationId": "TaskTemplateController_deleteTaskTemplate",
+          "operationId": "PropertySeasonController_delete",
           "summary": "",
+          "description": "Delete a property season",
           "parameters": [
             {
-              "name": "taskTemplateId",
+              "name": "id",
               "required": true,
               "in": "path",
               "schema": {
@@ -3473,31 +1178,79 @@
             }
           ],
           "responses": {
-            "204": {
-              "description": ""
+            "200": {
+              "description": "Success"
+            },
+            "400": {
+              "description": "Bad Request"
             },
             "401": {
-              "description": ""
+              "description": "Unauthorized"
             },
             "403": {
-              "description": ""
+              "description": "Forbidden"
             },
             "404": {
-              "description": ""
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/DeleteTaskTemplateErrorDTO"
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "land/property-season"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/api/v1/land/property-season/bulk": {
+        "post": {
+          "operationId": "PropertySeasonController_createBulk",
+          "summary": "",
+          "description": "Create many property seasons",
+          "parameters": [
+            {
+              "name": "resetSeasons",
+              "required": true,
+              "in": "query",
+              "schema": {
+                "type": "boolean"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
                   }
                 }
               }
             }
           },
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "400": {
+              "description": "Bad Request"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
           "tags": [
-            "CRM"
+            "land/property-season"
           ],
           "security": [
             {
@@ -3508,8 +1261,8 @@
       }
     },
     "info": {
-      "title": "Tarken Workflow API",
-      "description": "The Workflow API is organized in REST. Our API has predictable resource oriented URLs, accepts form-encoded request bodies, returns JSON-encoded responses, and uses HTTP response codes, authentication and verbs. <br /><br />The workflow aims to integrate the entire retail operation through workflows. With the personalized definition of processes, people in charge, forms and automations, the system provides a dynamism that is capable of encompassing several specific cases for our customers. With the main objective of guaranteeing an efficient and agile process, the platform provides a direct and digital connection between the field team, through the Consultant App, and the analysis team.<br />    Using information from other products, mainly from Inspector, Workflow offers a customized, specific and complex rating calculation for the user. It is possible to evaluate each aspect of the producer automatically. With just a few clicks, the platform provides a rating score and a suggested credit limit for the order under review. Bring your credit policy to Workflow and optimize your operation.<br /><br /> URL: https://prod.api.hub.tarken.ag",
+      "title": "Tarken Land API",
+      "description": "The HUB API is organized in REST. Our API has predictable resource oriented URLs, accepts form-encoded request bodies, returns JSON-encoded responses, and uses HTTP response codes, authentication and verbs. You can use this API to list rural properties, customers, registration data, credit bureau, compliance, related people, lawsuits, state registration, warehouses, seasons, areas, productive areas, CPR, SCR, IRPF and etc, it is also possible to request analyzes of this information.<br /><br /> URL: https://prod.api.hub.tarken.ag",
       "version": "1.0.0",
       "contact": {}
     },
